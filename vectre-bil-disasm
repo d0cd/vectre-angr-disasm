@@ -19,4 +19,4 @@ if __name__ == "__main__":
 
     # Create UCLID5
     # TODO: Arguments to parser can be unroll or induction
-    sst.transpile(output_file_path)
+    sst.disassemble(output_file_path)
