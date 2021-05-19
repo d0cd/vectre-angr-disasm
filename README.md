@@ -1,2 +1,2 @@
-# vectre-x86-disasm
-x86 Disassembler producing program definitions for the Vectre++ toolchain.
+# vectre-bil-disasm
+Disassembler producing program definitions for the Vectre++ toolchain, using BAP as an intermediate representation.
