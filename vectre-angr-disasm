@@ -19,7 +19,7 @@ if __name__ == "__main__":
     serializer = VectreProgDefSerializer(proj)
     vectre_spec = serializer.serialize_binary()
 
-    with open(output_file_path, 'w') as f:
+    with open(output_file_path, 'w+') as f:
         f.write(vectre_spec)
 
 
