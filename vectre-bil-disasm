@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import angr
 
-from serializers.utils import print_blocks
-from transpiler import VectreDisassembler
+from serializers import VectreProgDefSerializer
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="BIL to UCLID5 Transpiler to check secure speculation.")
@@ -13,10 +14,12 @@ if __name__ == "__main__":
     binary_file_path = args.binary_file_path
     output_file_path = args.output_file_path
 
-    # Create parser
-    sst = VectreDisassembler()
-    sst.read_binary(binary_file_path)
+    # ANGR experiments
+    proj = angr.Project(binary_file_path)
+    serializer = VectreProgDefSerializer(proj)
+    vectre_spec = serializer.serialize_binary()
 
-    # Create UCLID5
-    # TODO: Arguments to parser can be unroll or induction
-    sst.disassemble(output_file_path)
+    with open(output_file_path, 'w') as f:
+        f.write(vectre_spec)
+
+
