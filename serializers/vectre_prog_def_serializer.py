@@ -24,7 +24,6 @@ class VectreProgDefSerializer:
         header = f"ENTRY_{node.block_id}:"
         if node.block is not None:
             fixed_strs = []
-            print(node.block_id,  type(node), type(node.block))
 
             disasm_str = str(node.block.disassembly)
             inst_strs = disasm_str.split('\n')
