@@ -1,0 +1,25 @@
+// Grammar for a basic block of ARM disassembly (outputted by ANGR)
+
+block: line (_NEWLINE line)*
+line: addr ":" op operands? "!"?
+operands: operand ("," operand)*
+
+operand: exp | arr
+arr: "[" simple_operand ("," simple_operand)* "]"
+exp: simple_operand | simple_operand ("+"|"-") simple_operand
+simple_operand: number | reg
+
+addr: HEX_NUMBER
+op: /[a-zA-Z]+(\.[a-zA-Z]+)*/
+number: "#" "-"? (DEC_NUMBER | HEX_NUMBER)
+reg: /[a-zA-Z0-9]+/
+
+DEC_NUMBER: /[1-9]\d*l?/i
+HEX_NUMBER: /0x[\da-f]*l?/i
+
+
+// Other terminals
+
+_NEWLINE: ( /\r?\n[\t ]*/ )+
+
+%ignore /[\t \f]+/  // WS

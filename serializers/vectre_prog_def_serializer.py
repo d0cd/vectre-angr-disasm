@@ -1,4 +1,5 @@
 from .templates import *
+from .arm_disasm_processor import ArmDisassemblyProcessor
 
 import angr
 import re
@@ -9,8 +10,17 @@ class VectreProgDefSerializer:
 
     def __init__(self, _project):
         self.angr_project = _project
+        print (self.angr_project.arch)
+        print(angr.archinfo.ArchAArch64())
+        if self.angr_project.arch == angr.archinfo.ArchAArch64():
+            self.disas_processor = ArmDisassemblyProcessor()
+        else:
+            self.disas_processor = None
 
     def serialize_binary(self):
+        obj = self.angr_project.loader.main_object
+        print(obj.sections)
+
         cfg = self.angr_project.analyses.CFGFast()
         nodes = cfg.graph.nodes()
         basic_blocks = []
@@ -26,6 +36,8 @@ class VectreProgDefSerializer:
             fixed_strs = []
 
             disasm_str = str(node.block.disassembly)
+            self.disas_processor.parse_bb_str(disasm_str)
+            print(disasm_str)
             inst_strs = disasm_str.split('\n')
             assert len(node.block.instruction_addrs) == len(inst_strs)
             for (addr, inst_str) in zip(node.block.instruction_addrs, inst_strs):
