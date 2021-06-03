@@ -1,4 +1,4 @@
-// Grammar for a basic block of ARM disassembly (outputted by ANGR)
+// Grammar for a basic block of x86_64 disassembly (outputted by ANGR)
 
 block: line (_NEWLINE line)*
 line: addr ":" op operands? "!"?
