@@ -1,22 +1,49 @@
 // Grammar for a basic block of x86_64 disassembly (outputted by ANGR)
 
 block: line (_NEWLINE line)*
-line: addr ":" op operands? "!"?
+line: addr ":" op operands?
 operands: operand ("," operand)*
 
-operand: exp | arr
-arr: "[" simple_operand ("," simple_operand)* "]"
-exp: simple_operand | simple_operand ("+"|"-") simple_operand
-simple_operand: number | reg
 
-addr: HEX_NUMBER
+addr: HEX_VAL
+
 op: /[a-zA-Z]+(\.[a-zA-Z]+)*/
-number: "#" "-"? (DEC_NUMBER | HEX_NUMBER)
-reg: /[a-zA-Z0-9]+/
 
-DEC_NUMBER: /[1-9]\d*l?/i
-HEX_NUMBER: /0x[\da-f]*l?/i
+operand: expr | ptr
+arr: "[" expr "]"
+ptr: ("byte" | "word" | "dword" | "qword") "ptr" arr
 
+expr : term
+| expr "+" term
+| expr "-" term
+| expr "*" term
+| expr "/" term
+| expr "&" term
+| expr "|" term
+| expr ">>" term
+| expr "<<" term
+| expr "%" term
+| expr "!" term
+| expr "^" term
+
+term : id
+| number | "-" term
+//| "[" expr "]"
+//| "<o>" term
+//| "<s>" term
+
+id : /[a-zA-Z_][a-zA-Z0-9_]*/
+
+number : DEC_VAL
+| HEX_VAL
+| OCT_VAL
+| BIN_VAL
+
+LABEL: /[a-zA-Z_][a-zA-Z0-9_]*:/
+DEC_VAL: /[1-9][0-9]*/
+HEX_VAL: /0[Xx][0-9a-fA-F][0-9a-fA-F]*/
+OCT_VAL: /0[0-7]*/
+BIN_VAL: /0[Bb][0-1][0-1]*/
 
 // Other terminals
 
