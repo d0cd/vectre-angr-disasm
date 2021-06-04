@@ -2,12 +2,18 @@
 
 block: line (_NEWLINE line)*
 line: addr ":" op operands? "!"?
-operands: operand ("," operand)*
+operands: _operand ("," _operand)*
 
-operand: exp | arr
-arr: "[" simple_operand ("," simple_operand)* "]"
-exp: simple_operand | simple_operand ("+"|"-") simple_operand
-simple_operand: number | reg
+_operand: exp | arr
+arr: pre_index | post_index
+post_index: _arr_base
+pre_index: _arr_base "!"
+_arr_base: sing_arr | doub_arr | trip_arr
+sing_arr: "[" _simple_operand "]"
+doub_arr: "[" _simple_operand "," _simple_operand "]"
+trip_arr: "[" _simple_operand "," _simple_operand "," op number? "]"
+?exp: _simple_operand | _simple_operand ("+"|"-") _simple_operand
+_simple_operand: number | reg
 
 addr: HEX_NUMBER
 op: /[a-zA-Z]+(\.[a-zA-Z]+)*/

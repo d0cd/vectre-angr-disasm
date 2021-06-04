@@ -19,33 +19,23 @@ class VectreProgDefSerializer:
             self.disas_processor = None
 
     def serialize_binary(self):
-        obj = self.angr_project.loader.main_object
-        print(obj.sections)
+        #obj = self.angr_project.loader.main_object
+        #print(obj.sections)
 
         cfg = self.angr_project.analyses.CFGFast()
         nodes = cfg.graph.nodes()
         basic_blocks = []
         for node in nodes:
             basic_blocks.append(self.serialize_cfg_node(node))
-        prog_name = self.angr_project.filename.replace(".o", "").replace("/", "_").replace(".", "")
+        prog_name = self.angr_project.filename.replace(".o", "").replace("/", "_").replace(".", "").replace("-","_")
         bb_str = "\n".join(basic_blocks)
         return prog_def_template.substitute(PROG_NAME=prog_name, BASIC_BLOCKS=bb_str)
 
     def serialize_cfg_node(self, node: angr.knowledge_plugins.cfg.CFGNode):
         header = f"ENTRY_{node.block_id}:"
         if node.block is not None:
-            fixed_strs = []
-
             disasm_str = str(node.block.disassembly)
-            self.disas_processor.parse_bb_str(disasm_str)
-            print(disasm_str)
-            inst_strs = disasm_str.split('\n')
-            assert len(node.block.instruction_addrs) == len(inst_strs)
-            for (addr, inst_str) in zip(node.block.instruction_addrs, inst_strs):
-                decimal_addr_str = re.sub(r'^0x\d+', str(addr), inst_str).strip()
-                fixed_str = f"    {decimal_addr_str};"
-                fixed_strs.append(fixed_str)
-            body = '\n'.join(fixed_strs)
+            body = self.disas_processor.serialize_basic_block(disasm_str)
         else:
             body = ""
         return f"{header}\n{body}"
