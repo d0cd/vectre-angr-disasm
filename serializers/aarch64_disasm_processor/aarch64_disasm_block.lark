@@ -14,8 +14,9 @@ op: /[a-zA-Z]+(\.[a-zA-Z]+)*/
 number: "#" "-"? (DEC_NUMBER | HEX_NUMBER)
 reg: /[a-zA-Z0-9]+/
 
-DEC_NUMBER: /[1-9]\d*l?/i
-HEX_NUMBER: /0x[\da-f]*l?/i
+
+DEC_NUMBER: /[0-9]+/
+HEX_NUMBER: /0[Xx][0-9a-fA-F][0-9a-fA-F]*/
 
 
 // Other terminals
