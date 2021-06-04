@@ -14,5 +14,4 @@ class AMD64DisassemblyProcessor:
         tree = self.arm_bb_parser.parse(bb_str)
         RenameInstructions().transform(tree)
         serialized = VectreSerializer().transform(tree)
-        print(serialized)
         return serialized
