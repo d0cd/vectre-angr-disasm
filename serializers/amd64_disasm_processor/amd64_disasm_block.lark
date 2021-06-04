@@ -2,35 +2,24 @@
 
 block: line (_NEWLINE line)*
 line: addr ":" op operands?
-operands: operand ("," operand)*
+operands: _operand ("," _operand)*
 
 
 addr: HEX_VAL
 
 op: /[a-zA-Z]+(\.[a-zA-Z]+)*/
 
-operand: expr | ptr
-arr: "[" expr "]"
-ptr: ("byte" | "word" | "dword" | "qword") "ptr" arr
+_operand: expr | ptr
+ptr: width "ptr" "[" expr "]"
+!width:  "byte" | "word" | "dword" | "qword"
 
-expr : term
-| expr "+" term
-| expr "-" term
-| expr "*" term
-| expr "/" term
-| expr "&" term
-| expr "|" term
-| expr ">>" term
-| expr "<<" term
-| expr "%" term
-| expr "!" term
-| expr "^" term
+?expr : term
+| expr operator term
 
-term : id
+!operator: "+" | "-"
+
+?term : id
 | number | "-" term
-//| "[" expr "]"
-//| "<o>" term
-//| "<s>" term
 
 id : /[a-zA-Z_][a-zA-Z0-9_]*/
 
@@ -39,7 +28,6 @@ number : DEC_VAL
 | OCT_VAL
 | BIN_VAL
 
-LABEL: /[a-zA-Z_][a-zA-Z0-9_]*:/
 DEC_VAL: /[1-9][0-9]*/
 HEX_VAL: /0[Xx][0-9a-fA-F][0-9a-fA-F]*/
 OCT_VAL: /0[0-7]*/
