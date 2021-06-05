@@ -15,3 +15,9 @@ class AMD64DisassemblyProcessor:
         RenameInstructions().transform(tree)
         serialized = VectreSerializer().transform(tree)
         return serialized
+
+    def generate_inst_def_skeleton(self, inst_str):
+        pass
+
+    def generate_platform_def_skeleton(self, inst_str):
+        pass

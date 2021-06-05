@@ -3,24 +3,39 @@
 import argparse
 import angr
 
-from serializers import VectreProgDefSerializer
+from serializers import VectreProgDefSerializer, VectreInstDefSerializer, VectrePlatformDefSerializer
 
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser(description="BIL to UCLID5 Transpiler to check secure speculation.")
     parser.add_argument("binary_file_path")
-    parser.add_argument("output_file_path")
+    parser.add_argument('--prog-def', metavar="FILE", nargs=1, help='Generate program definition and output to [FILE].')
+    parser.add_argument('--inst-def', metavar="FILE", nargs=1, help='Generate instruction definition and output to [FILE].')
+    parser.add_argument('--plat-def', metavar="FILE", nargs=1, help='Generate platform definition and output to [FILE].')
     args = parser.parse_args()
+
     binary_file_path = args.binary_file_path
-    output_file_path = args.output_file_path
-
-    # ANGR experiments
     proj = angr.Project(binary_file_path)
-    serializer = VectreProgDefSerializer(proj)
-    vectre_spec = serializer.serialize_binary()
 
-    with open(output_file_path, 'w+') as f:
-        f.write(vectre_spec)
+    if args.prog_def:
+        serializer = VectreProgDefSerializer(proj)
+        vectre_spec = serializer.serialize_binary()
+        with open(args.prog_def, 'w+') as f:
+           f.write(vectre_spec)
+
+    if args.inst_def:
+        serializer = VectreInstDefSerializer(proj)
+        vectre_spec = serializer.serialize_inst_def()
+        with open(args.inst_def, 'w+') as f:
+            f.write(vectre_spec)
+
+    if args.plat_def:
+        serializer = VectrePlatformDefSerializer(proj)
+        vectre_spec = serializer.serialize_platform_def()
+        with open(args.plat_def, 'w+') as f:
+            f.write(vectre_spec)
+
 
 
 
