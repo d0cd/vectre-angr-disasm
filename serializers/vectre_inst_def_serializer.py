@@ -24,4 +24,5 @@ class VectreInstDefSerializer:
             if node.block is not None:
                 bb_strs.append(str(node.block.disassembly))
         inst_str = "\n".join(bb_strs)
-        return self.disas_processor.generate_inst_def_skeleton(inst_str)
+        serialized_spec = self.disas_processor.generate_inst_def_skeleton(inst_str)
+        return serialized_spec

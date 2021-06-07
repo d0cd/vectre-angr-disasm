@@ -1,10 +1,12 @@
 
 from lark import Lark
 
-from .collect_inst_sigs import CollectInstructionSignatures
+from .collect_inst_sigs import CollectInstructionNames
 from .remove_trip_arr import RemoveTripleArrays
 from .rename_instructions import RenameInstructions
 from .vectre_serializer import VectreSerializer
+
+from ..templates import inst_def_template
 
 """
 Processing Logic:
@@ -29,10 +31,35 @@ class AArch64DisassemblyProcessor:
         RenameInstructions().transform(tree)
         cleaned = RemoveTripleArrays().transform(tree)
 
-        collector = CollectInstructionSignatures()
+        collector = CollectInstructionNames()
         collector.visit(cleaned)
 
-        return "TEMP"
+        inst_specs = []
+        for inst in collector.inst_info:
+            params = []
+            arg_types = inst.split("__")[1:]
+            for (i, typ) in enumerate(arg_types):
+                if typ == "r":
+                    params.append(f"arg{i}: reg_index_t")
+                elif typ == "n":
+                    params.append(f"arg{i}: number_t")
+                elif typ[0] == "t":
+                    num_elems = int(typ[2])
+                    assert num_elems > 0
+                    tup_typs = typ[4:3 + num_elems * 2].split("_")
+                    tup_typ_strs = []
+                    for t in tup_typs:
+                        if t == 'r':
+                            tup_typ_strs.append("reg_index_t")
+                        elif t == 'n':
+                            tup_typ_strs.append("number_t")
+                        else:
+                            raise Exception(f"Unknown tuple type: {t}")
+                    params.append(f"arg{i}: {{{', '.join(tup_typ_strs)}}}")
+            arg_sig = ", ".join(params)
+            inst_specs.append(inst_def_template.substitute(INST_NAME=inst, ARG_SIG=arg_sig))
+
+        return "\n\n".join(inst_specs)
 
     def generate_platform_def_skeleton(self, inst_str):
         pass

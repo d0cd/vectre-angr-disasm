@@ -1,8 +1,8 @@
 from lark import Visitor
 
 
-class CollectInstructionSignatures(Visitor):
-    inst_info = {}
+class CollectInstructionNames(Visitor):
+    inst_info = set()
 
     def line(self, args):
-        print(args)
+        self.inst_info.add(args.children[1].children[0].value)
