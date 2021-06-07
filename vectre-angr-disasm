@@ -20,21 +20,21 @@ if __name__ == "__main__":
 
     if args.prog_def:
         serializer = VectreProgDefSerializer(proj)
-        vectre_spec = serializer.serialize_binary()
-        with open(args.prog_def, 'w+') as f:
-           f.write(vectre_spec)
+        prog_spec = serializer.serialize_binary()
+        with open(args.prog_def[0], 'w+') as f:
+           f.write(prog_spec)
 
     if args.inst_def:
         serializer = VectreInstDefSerializer(proj)
-        vectre_spec = serializer.serialize_inst_def()
-        with open(args.inst_def, 'w+') as f:
-            f.write(vectre_spec)
+        inst_spec = serializer.serialize_inst_def()
+        with open(args.inst_def[0], 'w+') as f:
+            f.write(inst_spec)
 
     if args.plat_def:
         serializer = VectrePlatformDefSerializer(proj)
-        vectre_spec = serializer.serialize_platform_def()
-        with open(args.plat_def, 'w+') as f:
-            f.write(vectre_spec)
+        plat_spec = serializer.serialize_platform_def()
+        with open(args.plat_def[0], 'w+') as f:
+            f.write(plat_spec)
 
 
 

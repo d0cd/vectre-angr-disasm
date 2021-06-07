@@ -24,11 +24,14 @@ class RenameInstructions(Transformer):
                 elif operand.data == 'arr':
                     arr_length = operand.children[0].children[0].data
                     if arr_length == "sing_arr":
-                        tag += "__t1"
+                        tag += "__t_1"
+                        tag += self._create_tuple_tag(operand.children[0].children[0].children[:1])
                     elif arr_length == "doub_arr":
-                        tag += "__t2"
+                        tag += "__t_2"
+                        tag += self._create_tuple_tag(operand.children[0].children[0].children[:2])
                     elif arr_length == "trip_arr":
-                        tag += "__t2"
+                        tag += "__t_2"
+                        tag += self._create_tuple_tag(operand.children[0].children[0].children[:2])
                         tail = operand.children[0].children[0].children[2:]
                         tag += f"_{tail[0].children[0].value}"
                         if len(tail) == 2:
@@ -46,6 +49,17 @@ class RenameInstructions(Transformer):
                 else:
                     raise Exception(f"Unknown operand type: {operand.data}")
             op.children[0].value += tag
+
+    def _create_tuple_tag(self, args):
+        tag = ""
+        for arg in args:
+            if arg.data == "reg":
+                tag += "_r"
+            elif arg.data == "number":
+                tag += "_n"
+            else:
+                raise Exception(f"Unknown tuple arg: {arg.data}")
+        return tag
 
 
 

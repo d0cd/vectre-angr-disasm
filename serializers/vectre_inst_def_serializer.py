@@ -1,4 +1,3 @@
-from .templates import *
 from .aarch64_disasm_processor import AArch64DisassemblyProcessor
 from .amd64_disasm_processor import AMD64DisassemblyProcessor
 
@@ -18,4 +17,11 @@ class VectreInstDefSerializer:
             self.disas_processor = None
 
     def serialize_inst_def(self):
-       pass
+        bb_strs = []
+        cfg = self.angr_project.analyses.CFGFast()
+        nodes = cfg.graph.nodes()
+        for node in nodes:
+            if node.block is not None:
+                bb_strs.append(str(node.block.disassembly))
+        inst_str = "\n".join(bb_strs)
+        return self.disas_processor.generate_inst_def_skeleton(inst_str)

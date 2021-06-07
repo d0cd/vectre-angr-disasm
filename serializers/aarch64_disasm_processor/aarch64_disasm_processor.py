@@ -1,6 +1,7 @@
 
 from lark import Lark
 
+from .collect_inst_sigs import CollectInstructionSignatures
 from .remove_trip_arr import RemoveTripleArrays
 from .rename_instructions import RenameInstructions
 from .vectre_serializer import VectreSerializer
@@ -24,7 +25,14 @@ class AArch64DisassemblyProcessor:
         return serialized
 
     def generate_inst_def_skeleton(self, inst_str):
-        pass
+        tree = self.arm_bb_parser.parse(inst_str)
+        RenameInstructions().transform(tree)
+        cleaned = RemoveTripleArrays().transform(tree)
+
+        collector = CollectInstructionSignatures()
+        collector.visit(cleaned)
+
+        return "TEMP"
 
     def generate_platform_def_skeleton(self, inst_str):
         pass
