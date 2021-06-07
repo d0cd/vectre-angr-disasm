@@ -6,25 +6,26 @@ import angr
 
 
 class VectreProgDefSerializer:
-    angr_projects: angr.Project
+    angr_project: angr.Project
 
-    def __init__(self, _projects):
-        assert len(_projects) > 1, "Need at least one project"
-        self.angr_projects = _projects
+    def __init__(self, _project):
+        self.angr_project = _project
+        if self.angr_project == angr.archinfo.ArchAArch64():
+            self.disas_processor = AArch64DisassemblyProcessor()
+        elif self.angr_project == angr.rchinfo.ArchAMD64():
+            self.disas_processor = AMD64DisassemblyProcessor()
+        else:
+            self.disas_processor = None
 
     def serialize_binaries(self):
-        specs = []
-        for proj in self.angr_projects:
-            self._select_disas_processor(proj)
-            cfg = proj.analyses.CFGFast()
-            nodes = cfg.graph.nodes()
-            basic_blocks = []
-            for node in nodes:
-                basic_blocks.append(self.serialize_cfg_node(node))
-            prog_name = self.angr_projects.filename.replace(".o", "").replace("/", "_").replace(".", "").replace("-", "_")
-            bb_str = "\n".join(basic_blocks)
-            specs.append(prog_def_template.substitute(PROG_NAME=prog_name, BASIC_BLOCKS=bb_str))
-        return "\n\n".join(specs)
+        cfg = self.angr_project.analyses.CFGFast()
+        nodes = cfg.graph.nodes()
+        basic_blocks = []
+        for node in nodes:
+            basic_blocks.append(self.serialize_cfg_node(node))
+        prog_name = self.angr_projects.filename.replace(".o", "").replace("/", "_").replace(".", "").replace("-", "_")
+        bb_str = "\n".join(basic_blocks)
+        return prog_def_template.substitute(PROG_NAME=prog_name, BASIC_BLOCKS=bb_str)
 
     def serialize_cfg_node(self, node: angr.knowledge_plugins.cfg.CFGNode):
         header = f"ENTRY_{node.block_id}:"
@@ -35,10 +36,3 @@ class VectreProgDefSerializer:
             body = ""
         return f"{header}\n{body}"
 
-    def _select_disas_processor(self, proj):
-        if proj == angr.archinfo.ArchAArch64():
-            self.disas_processor = AArch64DisassemblyProcessor()
-        elif proj == angr.rchinfo.ArchAMD64():
-            self.disas_processor = AMD64DisassemblyProcessor()
-        else:
-            self.disas_processor = None

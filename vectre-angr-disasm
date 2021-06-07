@@ -19,7 +19,9 @@ if __name__ == "__main__":
     projs = [angr.Project(path) for path in binary_file_paths]
 
     if args.prog_def:
-        serializer = VectreProgDefSerializer(projs)
+        if len(projs) > 1:
+            print(f"WARNING: VectreProgDefSerializer only takes one binary file as input, using the first one provided: {projs[0].filename}")
+        serializer = VectreProgDefSerializer(projs[0])
         prog_spec = serializer.serialize_binaries()
         with open(args.prog_def[0], 'w+') as f:
            f.write(prog_spec)

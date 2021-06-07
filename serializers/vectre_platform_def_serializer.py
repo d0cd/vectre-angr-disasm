@@ -2,12 +2,13 @@ from .templates import *
 from .aarch64_disasm_processor import AArch64DisassemblyProcessor
 from .amd64_disasm_processor import AMD64DisassemblyProcessor
 
+from typing import List
+
 import angr
-import re
 
 
 class VectrePlatformDefSerializer:
-    angr_projects: angr.Project
+    angr_projects: List[angr.Project]
 
     def __init__(self, _projects):
         self.angr_projects = _projects
