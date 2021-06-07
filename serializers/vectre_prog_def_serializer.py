@@ -9,17 +9,13 @@ class VectreProgDefSerializer:
     angr_projects: angr.Project
 
     def __init__(self, _projects):
+        assert len(_projects) > 1, "Need at least one project"
         self.angr_projects = _projects
-        if self.angr_projects.arch == angr.archinfo.ArchAArch64():
-            self.disas_processor = AArch64DisassemblyProcessor()
-        elif self.angr_projects.arch == angr.rchinfo.ArchAMD64():
-            self.disas_processor = AMD64DisassemblyProcessor()
-        else:
-            self.disas_processor = None
 
     def serialize_binaries(self):
         specs = []
         for proj in self.angr_projects:
+            self._select_disas_processor(proj)
             cfg = proj.analyses.CFGFast()
             nodes = cfg.graph.nodes()
             basic_blocks = []
@@ -38,3 +34,11 @@ class VectreProgDefSerializer:
         else:
             body = ""
         return f"{header}\n{body}"
+
+    def _select_disas_processor(self, proj):
+        if proj == angr.archinfo.ArchAArch64():
+            self.disas_processor = AArch64DisassemblyProcessor()
+        elif proj == angr.rchinfo.ArchAMD64():
+            self.disas_processor = AMD64DisassemblyProcessor()
+        else:
+            self.disas_processor = None

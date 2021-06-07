@@ -7,13 +7,22 @@ import re
 
 
 class VectrePlatformDefSerializer:
-    angr_project: angr.Project
+    angr_projects: angr.Project
 
-    def __init__(self, _project):
-        self.angr_project = _project
-        if self.angr_project.arch == angr.archinfo.ArchAArch64():
+    def __init__(self, _projects):
+        self.angr_projects = _projects
+
+        # All projects must have the same arch
+        assert len(_projects) > 0, "Need at least one ANGR project"
+        arch = self.angr_projects[0].arch
+        for proj in self.angr_projects:
+            if proj.arch != arch:
+                raise Exception(
+                    "VectrePlatformDefSerializer must be initialized with a list of ANGR projects that all use the same architecture.")
+
+        if self.angr_projects.arch == angr.archinfo.ArchAArch64():
             self.disas_processor = AArch64DisassemblyProcessor()
-        elif self.angr_project.arch == angr.archinfo.ArchAMD64():
+        elif self.angr_projects.arch == angr.archinfo.ArchAMD64():
             self.disas_processor = AMD64DisassemblyProcessor()
         else:
             self.disas_processor = None
