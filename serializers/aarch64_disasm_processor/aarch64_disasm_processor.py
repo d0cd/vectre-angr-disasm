@@ -42,7 +42,7 @@ class AArch64DisassemblyProcessor:
                 if typ == "r":
                     params.append(f"arg{i}: reg_index_t")
                 elif typ == "n":
-                    params.append(f"arg{i}: number_t")
+                    params.append(f"arg{i}: word_t")
                 elif typ[0] == "t":
                     num_elems = int(typ[2])
                     assert num_elems > 0
@@ -52,7 +52,7 @@ class AArch64DisassemblyProcessor:
                         if t == 'r':
                             tup_typ_strs.append("reg_index_t")
                         elif t == 'n':
-                            tup_typ_strs.append("number_t")
+                            tup_typ_strs.append("word_t")
                         else:
                             raise Exception(f"Unknown tuple type: {t}")
                     params.append(f"arg{i}: {{{', '.join(tup_typ_strs)}}}")

@@ -17,13 +17,13 @@ class RenameInstructions(Transformer):
             tag = ""
             for operand in operands:
                 if operand.data == 'expr':
-                    tag += "__e"
+                    tag += "__w"
                 elif operand.data == 'term':
-                    tag += "__e"
+                    tag += "__w"
                 elif operand.data == 'number':
-                    tag += "__e"
+                    tag += "__w"
                 elif operand.data == 'id':
-                    tag += "__e"
+                    tag += "__r"
                 elif operand.data == 'ptr':
                     width = operand.children[0].children[0].value
                     tag += f"__p_{width}"
