@@ -38,7 +38,6 @@ class VectrePlatformDefSerializer:
                     bb_strs.append(str(node.block.disassembly))
         inst_str = "\n".join(bb_strs)
         serialized_spec = self.disas_processor.generate_platform_def_skeleton(inst_str)
-        print(serialized_spec)
         return serialized_spec
 
 
