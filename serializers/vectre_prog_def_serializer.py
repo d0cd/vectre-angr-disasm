@@ -10,9 +10,9 @@ class VectreProgDefSerializer:
 
     def __init__(self, _project):
         self.angr_project = _project
-        if self.angr_project == angr.archinfo.ArchAArch64():
+        if self.angr_project.arch == angr.archinfo.ArchAArch64():
             self.disas_processor = AArch64DisassemblyProcessor()
-        elif self.angr_project == angr.rchinfo.ArchAMD64():
+        elif self.angr_project.arch == angr.archinfo.ArchAMD64():
             self.disas_processor = AMD64DisassemblyProcessor()
         else:
             self.disas_processor = None
@@ -23,7 +23,7 @@ class VectreProgDefSerializer:
         basic_blocks = []
         for node in nodes:
             basic_blocks.append(self.serialize_cfg_node(node))
-        prog_name = self.angr_projects.filename.replace(".o", "").replace("/", "_").replace(".", "").replace("-", "_")
+        prog_name = self.angr_project.filename.replace(".o", "").replace("/", "_").replace(".", "").replace("-", "_")
         bb_str = "\n".join(basic_blocks)
         return prog_def_template.substitute(PROG_NAME=prog_name, BASIC_BLOCKS=bb_str)
 

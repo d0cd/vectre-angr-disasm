@@ -18,7 +18,7 @@ class VectreSerializer(Transformer):
         return ', '.join(operands)
 
     def addr(self, args):
-        return args[0].value
+        return args[0]
 
     def op(self, args):
         return args[0].value
@@ -27,7 +27,13 @@ class VectreSerializer(Transformer):
         return args[0].value
 
     def number(self, args):
-        return args[0].value
+        return args[0]
+
+    def HEX_NUMBER(self, args):
+        return f"{args}bv64"
+
+    def DEC_NUMBER(self, args):
+        return args
 
     def arr(self, args):
         arr_args = args[0].children[0].children
