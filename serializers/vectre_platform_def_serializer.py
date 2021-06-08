@@ -21,14 +21,24 @@ class VectrePlatformDefSerializer:
                 raise Exception(
                     "VectrePlatformDefSerializer must be initialized with a list of ANGR projects that all use the same architecture.")
 
-        if self.angr_projects.arch == angr.archinfo.ArchAArch64():
+        if self.angr_projects[0].arch == angr.archinfo.ArchAArch64():
             self.disas_processor = AArch64DisassemblyProcessor()
-        elif self.angr_projects.arch == angr.archinfo.ArchAMD64():
+        elif self.angr_projects[0].arch == angr.archinfo.ArchAMD64():
             self.disas_processor = AMD64DisassemblyProcessor()
         else:
             self.disas_processor = None
 
     def serialize_platform_def(self):
-        pass
+        bb_strs = []
+        for proj in self.angr_projects:
+            cfg = proj.analyses.CFGFast()
+            nodes = cfg.graph.nodes()
+            for node in nodes:
+                if node.block is not None:
+                    bb_strs.append(str(node.block.disassembly))
+        inst_str = "\n".join(bb_strs)
+        serialized_spec = self.disas_processor.generate_platform_def_skeleton(inst_str)
+        print(serialized_spec)
+        return serialized_spec
 
 

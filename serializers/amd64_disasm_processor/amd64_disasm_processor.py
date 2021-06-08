@@ -2,10 +2,12 @@
 from lark import Lark
 
 from .collect_inst_sigs import CollectInstructionNames
+from .collect_register_names import CollectRegisterNames
 from .rename_instructions import RenameInstructions
 from .vectre_serializer import VectreSerializer
 
-from ..templates import inst_def_template
+from ..templates import inst_def_template, platform_def_template
+
 
 class AMD64DisassemblyProcessor:
 
@@ -42,4 +44,15 @@ class AMD64DisassemblyProcessor:
         return "\n\n".join(inst_specs)
 
     def generate_platform_def_skeleton(self, inst_str):
-        pass
+        tree = self.arm_bb_parser.parse(inst_str)
+        RenameInstructions().transform(tree)
+
+        collector = CollectRegisterNames()
+        collector.visit(tree)
+
+        platform_name = "x86_64"
+        arch_vars = []
+        for reg in collector.reg_names:
+            arch_vars.append(f"// TODO: Model ${reg}")
+        body = '\n'.join(arch_vars)
+        return platform_def_template.substitute(PLATFORM_NAME=platform_name, BODY=body)

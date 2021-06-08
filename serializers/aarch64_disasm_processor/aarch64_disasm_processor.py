@@ -2,17 +2,19 @@
 from lark import Lark
 
 from .collect_inst_sigs import CollectInstructionNames
+from .collect_register_names import CollectRegisterNames
 from .remove_trip_arr import RemoveTripleArrays
 from .rename_instructions import RenameInstructions
 from .vectre_serializer import VectreSerializer
 
-from ..templates import inst_def_template
+from ..templates import inst_def_template, platform_def_template
 
 """
 Processing Logic:
 1. Append tags to instruction names denoting the types of arguments they take. Normalize complex addressing modes
 2. Serialize into Vectre string
 """
+
 
 class AArch64DisassemblyProcessor:
 
@@ -62,6 +64,17 @@ class AArch64DisassemblyProcessor:
         return "\n\n".join(inst_specs)
 
     def generate_platform_def_skeleton(self, inst_str):
-        pass
+        tree = self.arm_bb_parser.parse(inst_str)
+        RenameInstructions().transform(tree)
+        cleaned = RemoveTripleArrays().transform(tree)
 
+        collector = CollectRegisterNames()
+        collector.visit(cleaned)
+
+        platform_name = "aarch64"
+        arch_vars = []
+        for reg in collector.reg_names:
+            arch_vars.append(f"// TODO: Model ${reg}")
+        body = '\n'.join(arch_vars)
+        return platform_def_template.substitute(PLATFORM_NAME=platform_name, BODY=body)
 
