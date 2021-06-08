@@ -49,6 +49,7 @@ class RenameInstructions(Transformer):
                 else:
                     raise Exception(f"Unknown operand type: {operand.data}")
             op.children[0].value += tag
+            op.children[0].value = op.children[0].value.replace(".", "_")
 
     def _create_tuple_tag(self, args):
         tag = ""
