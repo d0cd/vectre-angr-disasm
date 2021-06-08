@@ -18,7 +18,7 @@ class VectreSerializer(Transformer):
         return ', '.join(operands)
 
     def addr(self, args):
-        return args[0]
+        return args[0].replace("bv64", "")
 
     def op(self, args):
         return args[0].value
