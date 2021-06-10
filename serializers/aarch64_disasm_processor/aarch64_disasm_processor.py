@@ -60,7 +60,6 @@ class AArch64DisassemblyProcessor:
                     params.append(f"arg{i}: {{{', '.join(tup_typ_strs)}}}")
             arg_sig = ", ".join(params)
             inst_specs.append(inst_def_template.substitute(INST_NAME=inst, ARG_SIG=arg_sig))
-
         return "\n\n".join(inst_specs)
 
     def generate_platform_def_skeleton(self, inst_str):
