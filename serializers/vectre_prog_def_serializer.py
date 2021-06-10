@@ -28,11 +28,11 @@ class VectreProgDefSerializer:
         return prog_def_template.substitute(PROG_NAME=prog_name, BASIC_BLOCKS=bb_str)
 
     def serialize_cfg_node(self, node: angr.knowledge_plugins.cfg.CFGNode):
-        header = f"ENTRY_{node.block_id}:"
         if node.block is not None:
+            header = f"ENTRY_{node.block_id}:"
             disasm_str = str(node.block.disassembly)
             body = self.disas_processor.serialize_basic_block(disasm_str)
+            return f"{header}\n{body}"
         else:
-            body = ""
-        return f"{header}\n{body}"
+            return ""
 
