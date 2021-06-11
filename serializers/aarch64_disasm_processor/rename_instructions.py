@@ -1,5 +1,6 @@
 from lark import Transformer, Tree
 
+import re
 
 class RenameInstructions(Transformer):
     """
@@ -19,6 +20,22 @@ class RenameInstructions(Transformer):
             for operand in operands:
                 if operand.data == 'reg':
                     tag += "__r"
+
+                    # Add width information
+                    name = operand.children[0].value
+                    if (re.match("x\d+", name)):
+                        tag += "64"
+                        operand.children[0].value = f"gpr_{name.replace('x', '')}"
+                    elif (re.match("w\d+", name)):
+                        tag += "32"
+                        operand.children[0].value = f"gpr_{name.replace('w', '')}"
+                    elif (re.match("sp", name)):
+                        tag += "64"
+                    elif (re.match("wsp", name)):
+                        tag += "32"
+                    else:
+                        print(args)
+                        raise Exception(f"Unknown register name: {name}")
                 elif operand.data == 'number':
                     tag += "__n"
                 elif operand.data == 'arr':
@@ -39,10 +56,11 @@ class RenameInstructions(Transformer):
                     else:
                         raise Exception(f"Unsupported array length: {arr_length}")
 
+                    # Only tags for pre-index addressing are added, post-indexed instructions can be found by the instruction signature
                     if operand.children[0].data == 'pre_index':
                         tag += "_pre"  #
-                    elif operand.children[0].data == 'post_index':
-                        tag += '_post'
+                    elif operand.children[0].data == 'direct':
+                        continue
                     else:
                         raise Exception(f"Unknown indexing scheme: {operand.children[0].data}")
 

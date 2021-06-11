@@ -3,6 +3,7 @@ from lark import Lark
 
 from .collect_inst_sigs import CollectInstructionNames
 from .collect_register_names import CollectRegisterNames
+from .normalize_conditional_instructions import NormalizeConditionalInstructions
 from .remove_trip_arr import RemoveTripleArrays
 from .rename_instructions import RenameInstructions
 from .vectre_serializer import VectreSerializer
@@ -23,8 +24,9 @@ class AArch64DisassemblyProcessor:
 
     def serialize_basic_block(self, bb_str):
         tree = self.arm_bb_parser.parse(bb_str)
-        RenameInstructions().transform(tree)
-        cleaned = RemoveTripleArrays().transform(tree)
+        normalized = NormalizeConditionalInstructions().transform(tree)
+        RenameInstructions().transform(normalized)
+        cleaned = RemoveTripleArrays().transform(normalized)
         serialized = VectreSerializer().transform(cleaned)
         return serialized
 
