@@ -32,8 +32,9 @@ class AArch64DisassemblyProcessor:
 
     def generate_inst_def_skeleton(self, inst_str):
         tree = self.arm_bb_parser.parse(inst_str)
-        RenameInstructions().transform(tree)
-        cleaned = RemoveTripleArrays().transform(tree)
+        normalized = NormalizeConditionalInstructions().transform(tree)
+        RenameInstructions().transform(normalized)
+        cleaned = RemoveTripleArrays().transform(normalized)
 
         collector = CollectInstructionNames()
         collector.visit(cleaned)
@@ -68,8 +69,9 @@ class AArch64DisassemblyProcessor:
 
     def generate_platform_def_skeleton(self, inst_str):
         tree = self.arm_bb_parser.parse(inst_str)
-        RenameInstructions().transform(tree)
-        cleaned = RemoveTripleArrays().transform(tree)
+        normalized = NormalizeConditionalInstructions(tree)
+        RenameInstructions().transform(normalized)
+        cleaned = RemoveTripleArrays().transform(normalized)
 
         collector = CollectRegisterNames()
         collector.visit(cleaned)
