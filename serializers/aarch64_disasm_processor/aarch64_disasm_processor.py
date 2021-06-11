@@ -45,9 +45,9 @@ class AArch64DisassemblyProcessor:
             arg_types = inst.split("__")[1:]
             for (i, typ) in enumerate(arg_types):
                 if typ[0] == "r":
-                    params.append(f"arg{i}: reg_index_t")
+                    params.append(f"arg{i}: bv64")
                 elif typ[0] == "n":
-                    params.append(f"arg{i}: word_t")
+                    params.append(f"arg{i}: bv64")
                 elif typ[0] == "t":
                     num_elems = int(typ[2])
                     assert num_elems > 0
@@ -55,9 +55,9 @@ class AArch64DisassemblyProcessor:
                     tup_typ_strs = []
                     for t in tup_typs:
                         if t == 'r':
-                            tup_typ_strs.append("reg_index_t")
+                            tup_typ_strs.append("bv64")
                         elif t == 'n':
-                            tup_typ_strs.append("word_t")
+                            tup_typ_strs.append("bv64")
                         else:
                             raise Exception(f"Unknown tuple type: {t}")
                     params.append(f"arg{i}: {{{', '.join(tup_typ_strs)}}}")

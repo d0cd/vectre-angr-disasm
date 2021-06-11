@@ -33,11 +33,11 @@ class AMD64DisassemblyProcessor:
             arg_types = inst.split("__")[1:]
             for (i, typ) in enumerate(arg_types):
                 if typ == "r":
-                    params.append(f"arg{i}: reg_index_t")
+                    params.append(f"arg{i}: bv64")
                 elif typ == "w":
-                    params.append(f"arg{i}: word_t")
+                    params.append(f"arg{i}: bv64")
                 elif typ[0] == "p":
-                    params.append(f"arg{i}: word_t")
+                    params.append(f"arg{i}: bv64")
             arg_sig = ", ".join(params)
             inst_specs.append(inst_def_template.substitute(INST_NAME=inst, ARG_SIG=arg_sig))
 
