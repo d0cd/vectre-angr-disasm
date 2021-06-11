@@ -33,6 +33,10 @@ class RenameInstructions(Transformer):
                         tag += "64"
                     elif (re.match("wsp", name)):
                         tag += "32"
+                    elif (re.match("xzr", name)):
+                        tag += "64"
+                    elif (re.match("wzr", name)):
+                        tag += "32"
                     else:
                         print(args)
                         raise Exception(f"Unknown register name: {name}")
