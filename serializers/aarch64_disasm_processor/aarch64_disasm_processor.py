@@ -45,7 +45,7 @@ class AArch64DisassemblyProcessor:
             arg_types = inst.split("__")[1:]
             for (i, typ) in enumerate(arg_types):
                 if typ[0] == "r":
-                    params.append(f"arg{i}: bv{typ[1:3]}")
+                    params.append(f"arg{i}: bv64")
                 elif typ[0] == "n":
                     params.append(f"arg{i}: bv64")
                 elif typ[0] == "t":
@@ -55,7 +55,7 @@ class AArch64DisassemblyProcessor:
                     tup_typ_strs = []
                     for t in tup_typs:
                         if t[0] == 'r':
-                            tup_typ_strs.append(f"bv{t[1:3]}")
+                            tup_typ_strs.append(f"bv64")
                         elif t[0] == 'n':
                             tup_typ_strs.append("bv64")
                         else:
