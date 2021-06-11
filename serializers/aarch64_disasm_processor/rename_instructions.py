@@ -19,27 +19,7 @@ class RenameInstructions(Transformer):
             tag = ""
             for operand in operands:
                 if operand.data == 'reg':
-                    tag += "__r"
-
-                    # Add width information
-                    name = operand.children[0].value
-                    if (re.match("x\d+", name)):
-                        tag += "64"
-                        operand.children[0].value = f"gpr_{name.replace('x', '')}"
-                    elif (re.match("w\d+", name)):
-                        tag += "32"
-                        operand.children[0].value = f"gpr_{name.replace('w', '')}"
-                    elif (re.match("sp", name)):
-                        tag += "64"
-                    elif (re.match("wsp", name)):
-                        tag += "32"
-                    elif (re.match("xzr", name)):
-                        tag += "64"
-                    elif (re.match("wzr", name)):
-                        tag += "32"
-                    else:
-                        print(args)
-                        raise Exception(f"Unknown register name: {name}")
+                    tag += self._create_reg_tag("__r", operand)
                 elif operand.data == 'number':
                     tag += "__n"
                 elif operand.data == 'arr':
@@ -77,11 +57,32 @@ class RenameInstructions(Transformer):
         tag = ""
         for arg in args:
             if arg.data == "reg":
-                tag += "_r"
+                tag += self._create_reg_tag("_r", arg)
             elif arg.data == "number":
                 tag += "_n"
             else:
                 raise Exception(f"Unknown tuple arg: {arg.data}")
+        return tag
+
+    def _create_reg_tag(self, prefix, operand):
+        tag = prefix
+        name = operand.children[0].value
+        if (re.match("x\d+", name)):
+            tag += "64"
+            operand.children[0].value = f"gpr_{name.replace('x', '')}"
+        elif (re.match("w\d+", name)):
+            tag += "32"
+            operand.children[0].value = f"gpr_{name.replace('w', '')}"
+        elif (re.match("sp", name)):
+            tag += "64"
+        elif (re.match("wsp", name)):
+            tag += "32"
+        elif (re.match("xzr", name)):
+            tag += "64"
+        elif (re.match("wzr", name)):
+            tag += "32"
+        else:
+            raise Exception(f"Unknown register name: {name}")
         return tag
 
 
