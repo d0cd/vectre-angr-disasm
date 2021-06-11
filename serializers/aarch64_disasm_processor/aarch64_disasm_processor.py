@@ -40,7 +40,7 @@ class AArch64DisassemblyProcessor:
         collector.visit(cleaned)
 
         inst_specs = []
-        for inst in collector.inst_info:
+        for inst in sorted(collector.inst_info):
             params = []
             arg_types = inst.split("__")[1:]
             for (i, typ) in enumerate(arg_types):
@@ -78,7 +78,7 @@ class AArch64DisassemblyProcessor:
 
         platform_name = "aarch64"
         arch_vars = []
-        for reg in collector.reg_names:
+        for reg in sorted(collector.reg_names):
             arch_vars.append(f"// TODO: Model ${reg}")
         body = '\n'.join(arch_vars)
         return platform_def_template.substitute(PLATFORM_NAME=platform_name, BODY=body)
