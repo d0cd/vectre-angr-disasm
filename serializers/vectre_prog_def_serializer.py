@@ -25,7 +25,6 @@ class VectreProgDefSerializer:
             basic_blocks.append(self.serialize_cfg_node(node))
         prog_name = self.angr_project.filename.replace(".o", "").replace("/", "_").replace(".", "").replace("-", "_")
         bb_str = "\n".join(basic_blocks)
-        print(prog_def_template.substitute(PROG_NAME=prog_name, BASIC_BLOCKS=bb_str))
         return prog_def_template.substitute(PROG_NAME=prog_name, BASIC_BLOCKS=bb_str)
 
     def serialize_cfg_node(self, node: angr.knowledge_plugins.cfg.CFGNode):
