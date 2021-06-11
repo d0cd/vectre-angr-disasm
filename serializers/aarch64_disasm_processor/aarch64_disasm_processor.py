@@ -43,9 +43,9 @@ class AArch64DisassemblyProcessor:
             params = []
             arg_types = inst.split("__")[1:]
             for (i, typ) in enumerate(arg_types):
-                if typ == "r":
+                if typ[0] == "r":
                     params.append(f"arg{i}: reg_index_t")
-                elif typ == "n":
+                elif typ[0] == "n":
                     params.append(f"arg{i}: word_t")
                 elif typ[0] == "t":
                     num_elems = int(typ[2])
@@ -60,6 +60,8 @@ class AArch64DisassemblyProcessor:
                         else:
                             raise Exception(f"Unknown tuple type: {t}")
                     params.append(f"arg{i}: {{{', '.join(tup_typ_strs)}}}")
+                else:
+                    raise Exception(f"Unknown type annotation found when generating instruction definitions: {typ}")
             arg_sig = ", ".join(params)
             inst_specs.append(inst_def_template.substitute(INST_NAME=inst, ARG_SIG=arg_sig))
         return "\n\n".join(inst_specs)
