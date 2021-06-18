@@ -69,7 +69,7 @@ class AArch64DisassemblyProcessor:
 
     def generate_platform_def_skeleton(self, inst_str):
         tree = self.arm_bb_parser.parse(inst_str)
-        normalized = NormalizeConditionalInstructions(tree)
+        normalized = NormalizeConditionalInstructions().transform(tree)
         RenameInstructions().transform(normalized)
         cleaned = RemoveTripleArrays().transform(normalized)
 
