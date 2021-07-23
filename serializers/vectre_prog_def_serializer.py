@@ -22,14 +22,14 @@ class VectreProgDefSerializer:
         nodes = cfg.graph.nodes()
         basic_blocks = []
         for node in nodes:
-            basic_blocks.append(self.serialize_cfg_node(node))
+            basic_blocks.append(self.serialize_cfg_node(node, self.angr_project.entry == node.block_id))
         prog_name = self.angr_project.filename.replace(".o", "").replace("/", "_").replace(".", "").replace("-", "_")
         bb_str = "\n".join(basic_blocks)
         return prog_def_template.substitute(PROG_NAME=prog_name, BASIC_BLOCKS=bb_str)
 
-    def serialize_cfg_node(self, node: angr.knowledge_plugins.cfg.CFGNode):
+    def serialize_cfg_node(self, node: angr.knowledge_plugins.cfg.CFGNode, isEntry: bool):
         if node.block is not None:
-            header = f"ENTRY_{node.block_id}:"
+            header = f"ENTRY_{node.block_id}{'*' if isEntry else ''}:"
             disasm_str = str(node.block.disassembly)
             body = self.disas_processor.serialize_basic_block(disasm_str)
             return f"{header}\n{body}"
